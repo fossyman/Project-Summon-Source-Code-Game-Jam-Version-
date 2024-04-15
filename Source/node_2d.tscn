@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://blu741twlaciu"]
+
+[ext_resource type="Texture2D" uid="uid://cr7twh8dwyrmf" path="res://Assets/Sprites/Spells/ATLAS_Spell_Runes.png" id="1_5qtnj"]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(194, 455)
+scale = Vector2(4.65625, 4.65625)
+texture = ExtResource("1_5qtnj")
+region_enabled = true
+region_rect = Rect2(0, 0, 64, 64)
+region_filter_clip_enabled = true

@@ -1,0 +1,319 @@
+[gd_scene load_steps=24 format=3 uid="uid://oyoibjb4j83d"]
+
+[ext_resource type="Script" path="res://src/PlayerManager.gd" id="1_wu5dv"]
+[ext_resource type="Texture2D" uid="uid://bjj550eg8vvhm" path="res://Assets/Sprites/Hands/ATLAS_PlayerHandAtlas.png" id="2_crbfr"]
+[ext_resource type="Script" path="res://src/ArmsManager.gd" id="2_tgh7d"]
+[ext_resource type="Script" path="res://src/SpellManager.gd" id="3_uutqs"]
+[ext_resource type="PackedScene" uid="uid://dwpiaaaufhuic" path="res://Scenes/Entities/Goblin.tscn" id="4_o48be"]
+[ext_resource type="Texture2D" uid="uid://cjjj5si0rdiyl" path="res://Assets/Sprites/NO MANA.png" id="4_xm86e"]
+[ext_resource type="PackedScene" uid="uid://bgvvn6yfgho8l" path="res://Scenes/Spells/SPELL_Spawn_Goblin.tscn" id="5_4vdec"]
+[ext_resource type="PackedScene" uid="uid://qy26klkv4djk" path="res://Scenes/SpellTest.tscn" id="5_cc6d7"]
+[ext_resource type="PackedScene" uid="uid://t0j3ubj1541v" path="res://Scenes/Spells/SPELL_Spawn_Warrior.tscn" id="6_ui286"]
+[ext_resource type="PackedScene" uid="uid://dgixh6utgkm1b" path="res://Scenes/Spells/SPELL_SetRallyPoint.tscn" id="7_cr3lj"]
+[ext_resource type="Script" path="res://Scenes/Entities/HUDManager.gd" id="9_fw53c"]
+[ext_resource type="Texture2D" uid="uid://b12gx53072yt7" path="res://Assets/Sprites/SpellFailed.png" id="9_jew80"]
+[ext_resource type="FontFile" uid="uid://b016u3tlooovh" path="res://Assets/Fonts/pala.ttf" id="9_v4lbm"]
+[ext_resource type="AudioStream" uid="uid://rqminmh2ge1e" path="res://Assets/Audio/SFX/Summon.wav" id="11_i7ihu"]
+[ext_resource type="AudioStream" uid="uid://duahfpu8q0i0j" path="res://Assets/Audio/SFX/NOMANA.wav" id="11_ol186"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gqq35"]
+radius = 0.3
+
+[sub_resource type="Gradient" id="Gradient_8wbwb"]
+offsets = PackedFloat32Array(0.00862069, 0.87931, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0.592157, 1, 1, 1, 0)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_6g8us"]
+radius = 3.25251
+
+[sub_resource type="Curve" id="Curve_2kf5h"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.252964, 0.677686), 0.0, 0.0, 0, 0, Vector2(0.592885, 0.68843), 0.0, 0.0, 0, 0, Vector2(0.70751, 0.419835), 0.0, 0.0, 0, 0, Vector2(0.814229, 0.516529), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 6
+
+[sub_resource type="Gradient" id="Gradient_g2h7o"]
+offsets = PackedFloat32Array(0.84, 1)
+colors = PackedColorArray(1, 0, 0, 1, 0, 0, 0, 0)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_s3gam"]
+size = Vector2(0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lrn0r"]
+bg_color = Color(0.227451, 0.227451, 0.227451, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 1)
+corner_detail = 1
+expand_margin_top = 15.0
+expand_margin_bottom = 15.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4vwk3"]
+border_width_left = 1
+border_width_right = 1
+border_color = Color(0.207843, 0.207843, 0.207843, 1)
+expand_margin_top = 14.0
+expand_margin_bottom = 14.0
+
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("Head", "CameraPoint", "HUD", "ArmsParent", "SpellCaster")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("1_wu5dv")
+JumpHeight = 1.8
+JumpPeakTime = 0.4
+JumpFallTime = 0.3
+JumpDistance = 100.0
+GroundSpeed = 15.0
+AirSpeed = 15.0
+Head = NodePath("Head")
+CameraPoint = NodePath("Head/CameraTransformer")
+HUD = NodePath("Control/HUD")
+ArmsParent = NodePath("Control/ArmParent")
+SpellCaster = NodePath("Control/ArmParent/Movement/SpellManager")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_gqq35")
+
+[node name="Head" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+
+[node name="CameraTransformer" type="RemoteTransform3D" parent="Head"]
+remote_path = NodePath("../../Control/Viewport/SubViewport/MainCamera")
+
+[node name="SpellCastTransformer" type="RemoteTransform3D" parent="Head/CameraTransformer"]
+remote_path = NodePath("../../../Control/ArmParent/Movement/SpellManager/SpellSpawnRaycast")
+update_scale = false
+
+[node name="Control" type="Control" parent="."]
+texture_filter = 1
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+mouse_default_cursor_shape = 2
+
+[node name="Viewport" type="SubViewportContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+mouse_default_cursor_shape = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="Control/Viewport"]
+handle_input_locally = false
+size = Vector2i(1152, 648)
+render_target_update_mode = 4
+
+[node name="MainCamera" type="Camera3D" parent="Control/Viewport/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+current = true
+
+[node name="ArmParent" type="Control" parent="Control" node_paths=PackedStringArray("ArmContainer", "MovementContainer", "ArmsSprite", "Touchpoint", "TouchParticles", "TouchArea")]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+mouse_default_cursor_shape = 2
+script = ExtResource("2_tgh7d")
+ArmContainer = NodePath("Movement/Arms")
+MovementContainer = NodePath("Movement")
+ArmsSprite = NodePath("Movement/Arms/ArmsSprite")
+Touchpoint = NodePath("Movement/Arms/ArmsSprite/Touchpoint")
+TouchParticles = NodePath("Movement/Arms/ArmsSprite/Touchpoint/CPUParticles2D")
+TouchArea = NodePath("Movement/Arms/ArmsSprite/Touchpoint/Area2D")
+
+[node name="Movement" type="Control" parent="Control/ArmParent"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+mouse_default_cursor_shape = 2
+
+[node name="Arms" type="Control" parent="Control/ArmParent/Movement"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+mouse_default_cursor_shape = 2
+
+[node name="ArmsSprite" type="Sprite2D" parent="Control/ArmParent/Movement/Arms"]
+z_index = 999
+position = Vector2(-445, -76)
+scale = Vector2(3.4375, 3.4375)
+texture = ExtResource("2_crbfr")
+region_enabled = true
+region_rect = Rect2(128, 0, 128, 128)
+
+[node name="Touchpoint" type="Node2D" parent="Control/ArmParent/Movement/Arms/ArmsSprite"]
+z_as_relative = false
+position = Vector2(43.0545, -34.3273)
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="Control/ArmParent/Movement/Arms/ArmsSprite/Touchpoint"]
+amount = 50
+emission_shape = 1
+emission_sphere_radius = 0.01
+direction = Vector2(0, 0)
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_max = 10.0
+angular_velocity_min = -1.0
+angular_velocity_max = 1.0
+angle_min = 10.0
+angle_max = 10.0
+scale_amount_max = 25.0
+color = Color(1, 0.905882, 0, 1)
+color_ramp = SubResource("Gradient_8wbwb")
+
+[node name="Area2D" type="Area2D" parent="Control/ArmParent/Movement/Arms/ArmsSprite/Touchpoint"]
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Control/ArmParent/Movement/Arms/ArmsSprite/Touchpoint/Area2D"]
+shape = SubResource("CircleShape2D_6g8us")
+
+[node name="SpellManager" type="Control" parent="Control/ArmParent/Movement" node_paths=PackedStringArray("SpellScene", "Spellcast", "SpellCastArea", "SpellDrawParticles", "NoManaParticles", "SpellSoundPlayer")]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -275.945
+offset_top = -204.325
+offset_right = -275.945
+offset_bottom = -204.325
+grow_vertical = 0
+mouse_filter = 2
+mouse_default_cursor_shape = 2
+script = ExtResource("3_uutqs")
+TestSpells = Array[PackedScene]([ExtResource("5_4vdec"), ExtResource("6_ui286"), ExtResource("7_cr3lj")])
+SpellScene = NodePath("Spell")
+Spellcast = NodePath("SpellSpawnRaycast")
+SpellCastArea = NodePath("SpellCastArea")
+TestGoblin = ExtResource("4_o48be")
+SpellDrawParticles = NodePath("../Arms/ArmsSprite/Touchpoint/CPUParticles2D")
+NoManaParticles = NodePath("NO MANA")
+NoManaTexture = ExtResource("4_xm86e")
+FailTexture = ExtResource("9_jew80")
+SpellSoundPlayer = NodePath("AudioStreamPlayer")
+FailSound = ExtResource("11_ol186")
+SummonSound = ExtResource("11_i7ihu")
+
+[node name="Spell" parent="Control/ArmParent/Movement/SpellManager" instance=ExtResource("6_ui286")]
+z_index = 1
+
+[node name="SpellSpawnRaycast" type="RayCast3D" parent="Control/ArmParent/Movement/SpellManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+target_position = Vector3(0, 0, -99)
+
+[node name="SpellCastArea" parent="Control/ArmParent/Movement/SpellManager" instance=ExtResource("5_cc6d7")]
+visible = false
+
+[node name="NO MANA" type="CPUParticles2D" parent="Control/ArmParent/Movement/SpellManager"]
+z_index = 4096
+z_as_relative = false
+position = Vector2(-9.135, -135.735)
+emitting = false
+amount = 1
+one_shot = true
+texture = ExtResource("4_xm86e")
+direction = Vector2(0, -1)
+gravity = Vector2(0, 0)
+initial_velocity_min = 50.0
+initial_velocity_max = 100.0
+angle_min = -20.0
+angle_max = 20.0
+scale_amount_min = 0.5
+scale_amount_max = 0.5
+scale_amount_curve = SubResource("Curve_2kf5h")
+color_ramp = SubResource("Gradient_g2h7o")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Control/ArmParent/Movement/SpellManager"]
+stream = ExtResource("11_ol186")
+volume_db = -5.0
+
+[node name="HUD" type="Control" parent="Control" node_paths=PackedStringArray("ManaBarSlider", "ManaBarText", "RoundLabel")]
+texture_filter = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+mouse_default_cursor_shape = 2
+script = ExtResource("9_fw53c")
+ManaBarSlider = NodePath("HSlider")
+ManaBarText = NodePath("HSlider/RichTextLabel2")
+RoundLabel = NodePath("RoundNumber")
+
+[node name="HSlider" type="HSlider" parent="Control/HUD"]
+modulate = Color(0, 0.627451, 1, 1)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -213.0
+offset_top = -47.0
+offset_right = -5.0
+offset_bottom = -15.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+mouse_default_cursor_shape = 2
+theme_override_icons/grabber_disabled = SubResource("PlaceholderTexture2D_s3gam")
+theme_override_styles/slider = SubResource("StyleBoxFlat_lrn0r")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_4vwk3")
+editable = false
+scrollable = false
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="Control/HUD/HSlider"]
+clip_contents = false
+layout_mode = 2
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_fonts/normal_font = ExtResource("9_v4lbm")
+theme_override_font_sizes/normal_font_size = 30
+bbcode_enabled = true
+text = "[center][wave amp=15 freq=2]"
+scroll_active = false
+text_direction = 2
+
+[node name="RoundNumber" type="RichTextLabel" parent="Control/HUD"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 58.0
+grow_horizontal = 2
+mouse_filter = 2
+mouse_default_cursor_shape = 2
+theme_override_font_sizes/normal_font_size = 41
+bbcode_enabled = true
+text = "[center]Round 1"
+
+[connection signal="area_entered" from="Control/ArmParent/Movement/Arms/ArmsSprite/Touchpoint/Area2D" to="Control/ArmParent/Movement/SpellManager" method="Touch_entered"]

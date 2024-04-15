@@ -1,0 +1,108 @@
+[gd_scene load_steps=13 format=3 uid="uid://qy26klkv4djk"]
+
+[ext_resource type="Script" path="res://src/CastAreaManager.gd" id="1_is6q0"]
+[ext_resource type="Texture2D" uid="uid://dyc4swjuo8qrj" path="res://Assets/Sprites/SpellBases/Miner_SummonIcon.png" id="2_3xjan"]
+[ext_resource type="Texture2D" uid="uid://btppiuwtl2j4j" path="res://Assets/Sprites/SpellBases/Warrior_SummonIcon.png" id="3_jvqvb"]
+[ext_resource type="Texture2D" uid="uid://lfmlkwhyn7bs" path="res://Assets/Sprites/SpellBases/RallyPoint_SummonIcon.png" id="4_kof5a"]
+
+[sub_resource type="Animation" id="Animation_qa68f"]
+resource_name = "new_animation"
+length = 5.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Mesh/MeshInstance3D:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = false
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 6.28319, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Mesh/Icon:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = false
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, -6.28319, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_j50p2"]
+_data = {
+"new_animation": SubResource("Animation_qa68f")
+}
+
+[sub_resource type="Gradient" id="Gradient_8n4h8"]
+offsets = PackedFloat32Array(0.629808, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_7c6f5"]
+gradient = SubResource("Gradient_8n4h8")
+width = 32
+height = 32
+fill_from = Vector2(0, 1)
+fill_to = Vector2(0, 0.252137)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hue32"]
+transparency = 1
+cull_mode = 2
+albedo_color = Color(0, 0, 0, 1)
+albedo_texture = SubResource("GradientTexture2D_7c6f5")
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_operator = 1
+emission_texture = SubResource("GradientTexture2D_7c6f5")
+texture_filter = 0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_7omyy"]
+material = SubResource("StandardMaterial3D_hue32")
+radial_segments = 8
+rings = 1
+cap_top = false
+cap_bottom = false
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_riqxy"]
+transparency = 1
+albedo_texture = ExtResource("2_3xjan")
+emission_enabled = true
+emission_texture = ExtResource("2_3xjan")
+texture_filter = 0
+texture_repeat = false
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_drmua"]
+lightmap_size_hint = Vector2i(30, 12)
+material = SubResource("StandardMaterial3D_riqxy")
+subdivide_width = 2
+
+[node name="SpellTest" type="Node3D" node_paths=PackedStringArray("SpellMeshes", "SpellIconArea")]
+script = ExtResource("1_is6q0")
+SpellMeshes = [NodePath("Mesh/MeshInstance3D")]
+SpellIconArea = NodePath("Mesh/Icon")
+SummonerIcons = Array[Texture2D]([ExtResource("2_3xjan"), ExtResource("3_jvqvb"), ExtResource("4_kof5a")])
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_j50p2")
+}
+autoplay = "new_animation"
+
+[node name="Mesh" type="Node3D" parent="."]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Mesh"]
+transform = Transform3D(1, 0, 0, 0, 0.48, 0, 0, 0, 1, 0, 0.564791, 0)
+mesh = SubResource("CylinderMesh_7omyy")
+skeleton = NodePath("../..")
+
+[node name="Icon" type="MeshInstance3D" parent="Mesh"]
+transform = Transform3D(0.355339, 0, 0, 0, 1, 0, 0, 0, 0.355339, 0, 0.0778161, 0)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_drmua")
+skeleton = NodePath("../..")

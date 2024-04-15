@@ -1,0 +1,57 @@
+[gd_scene load_steps=6 format=3 uid="uid://cxfgxhwlk0at7"]
+
+[ext_resource type="Texture2D" uid="uid://cnj3qcljtm7l8" path="res://Assets/Sprites/Characters/Warrior/Goblin_Warrior.png" id="1_sitb1"]
+[ext_resource type="Script" path="res://src/CHAR_WarriorGoblin.gd" id="1_usw6p"]
+[ext_resource type="Script" path="res://src/Components/AC_Health.gd" id="3_c02lp"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_15tsx"]
+radius = 0.657844
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_gcvxs"]
+radius = 12.0937
+
+[node name="Goblin" type="CharacterBody3D" node_paths=PackedStringArray("DetectionArea", "HealthComponent", "Sprite", "NavAgent", "AITimer", "CharaterSprite") groups=["ally"]]
+script = ExtResource("1_usw6p")
+DetectionArea = NodePath("DetectionArea")
+HealthComponent = NodePath("Node")
+Sprite = NodePath("Sprite3D")
+NavAgent = NodePath("NavigationAgent3D")
+AITimer = NodePath("AITimer")
+Moveespeed = 2.0
+AttackRange = 3.0
+AttackDamage = 3
+CharaterSprite = NodePath("Sprite3D")
+DefaultSprite = ExtResource("1_sitb1")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0.625419, 0)
+billboard = 2
+texture_filter = 0
+texture = ExtResource("1_sitb1")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.655, 0)
+shape = SubResource("SphereShape3D_15tsx")
+
+[node name="AITimer" type="Timer" parent="."]
+autostart = true
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+target_desired_distance = 2.0
+avoidance_enabled = true
+
+[node name="DetectionArea" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+collision_mask = 16
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DetectionArea"]
+shape = SubResource("SphereShape3D_gcvxs")
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource("3_c02lp")
+Health = 5
+
+[connection signal="timeout" from="AITimer" to="." method="_on_ai_timer_timeout"]
+[connection signal="target_reached" from="NavigationAgent3D" to="." method="_on_navigation_agent_3d_target_reached"]
+[connection signal="velocity_computed" from="NavigationAgent3D" to="." method="_on_navigation_agent_3d_velocity_computed"]
+[connection signal="body_entered" from="DetectionArea" to="." method="_on_detection_area_body_entered"]

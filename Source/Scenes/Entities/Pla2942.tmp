@@ -1,0 +1,230 @@
+[gd_scene load_steps=12 format=3 uid="uid://oyoibjb4j83d"]
+
+[ext_resource type="Script" path="res://src/PlayerManager.gd" id="1_wu5dv"]
+[ext_resource type="Texture2D" uid="uid://bjj550eg8vvhm" path="res://Assets/Sprites/Hands/ATLAS_PlayerHandAtlas.png" id="2_crbfr"]
+[ext_resource type="Texture2D" uid="uid://cr7twh8dwyrmf" path="res://Assets/Sprites/Spells/ATLAS_Spell_Runes.png" id="2_nhk1r"]
+[ext_resource type="Script" path="res://src/ArmsManager.gd" id="2_tgh7d"]
+[ext_resource type="Script" path="res://src/SpellManager.gd" id="3_uutqs"]
+[ext_resource type="PackedScene" uid="uid://dwpiaaaufhuic" path="res://Scenes/Entities/Goblin.tscn" id="4_o48be"]
+[ext_resource type="PackedScene" uid="uid://qy26klkv4djk" path="res://Scenes/SpellTest.tscn" id="5_cc6d7"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gqq35"]
+radius = 0.3
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_0q61s"]
+radius = 3.0
+
+[sub_resource type="Gradient" id="Gradient_8wbwb"]
+offsets = PackedFloat32Array(0.00862069, 0.87931, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0.592157, 1, 1, 1, 0)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_6g8us"]
+radius = 5.0
+
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("Head", "CameraPoint", "ArmsParent", "SpellCaster")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("1_wu5dv")
+Head = NodePath("Head")
+CameraPoint = NodePath("Head/CameraTransformer")
+ArmsParent = NodePath("Control/ArmParent")
+SpellCaster = NodePath("Control/ArmParent/Movement/SpellManager")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_gqq35")
+
+[node name="Head" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+
+[node name="CameraTransformer" type="RemoteTransform3D" parent="Head"]
+remote_path = NodePath("../../Control/Viewport/SubViewport/MainCamera")
+
+[node name="SpellCastTransformer" type="RemoteTransform3D" parent="Head/CameraTransformer"]
+remote_path = NodePath("../../../Control/ArmParent/Movement/SpellManager/SpellSpawnRaycast")
+update_scale = false
+
+[node name="Control" type="Control" parent="."]
+texture_filter = 1
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Viewport" type="SubViewportContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="Control/Viewport"]
+handle_input_locally = false
+size = Vector2i(1152, 648)
+render_target_update_mode = 4
+
+[node name="MainCamera" type="Camera3D" parent="Control/Viewport/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+current = true
+
+[node name="ArmParent" type="Control" parent="Control" node_paths=PackedStringArray("ArmContainer", "MovementContainer", "ArmsSprite", "Touchpoint", "TouchParticles", "TouchArea")]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("2_tgh7d")
+ArmContainer = NodePath("Movement/Arms")
+MovementContainer = NodePath("Movement")
+ArmsSprite = NodePath("Movement/Arms/ArmsSprite")
+Touchpoint = NodePath("Movement/Arms/ArmsSprite/Touchpoint")
+TouchParticles = NodePath("Movement/Arms/ArmsSprite/Touchpoint/CPUParticles2D")
+TouchArea = NodePath("Movement/Arms/ArmsSprite/Touchpoint/Area2D")
+
+[node name="Movement" type="Control" parent="Control/ArmParent"]
+anchors_preset = 0
+
+[node name="SpellManager" type="Control" parent="Control/ArmParent/Movement" node_paths=PackedStringArray("SpellPoints", "Spellcast", "SpellTest")]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("3_uutqs")
+SpellPoints = NodePath("Spell/SpellPoints")
+Spellcast = NodePath("SpellSpawnRaycast")
+SpellTest = NodePath("SpellTest")
+TestGoblin = ExtResource("4_o48be")
+
+[node name="Spell" type="Sprite2D" parent="Control/ArmParent/Movement/SpellManager"]
+position = Vector2(-312, -207)
+scale = Vector2(4.625, 4.625)
+texture = ExtResource("2_nhk1r")
+region_enabled = true
+region_rect = Rect2(0, 0, 64, 64)
+
+[node name="SpellPoints" type="Node2D" parent="Control/ArmParent/Movement/SpellManager/Spell"]
+
+[node name="1" type="Area2D" parent="Control/ArmParent/Movement/SpellManager/Spell/SpellPoints"]
+position = Vector2(-3.45946, -27.8919)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Control/ArmParent/Movement/SpellManager/Spell/SpellPoints/1"]
+shape = SubResource("CircleShape2D_0q61s")
+
+[node name="2" type="Area2D" parent="Control/ArmParent/Movement/SpellManager/Spell/SpellPoints"]
+position = Vector2(-2.38419e-07, -19.2432)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Control/ArmParent/Movement/SpellManager/Spell/SpellPoints/2"]
+shape = SubResource("CircleShape2D_0q61s")
+
+[node name="3" type="Area2D" parent="Control/ArmParent/Movement/SpellManager/Spell/SpellPoints"]
+position = Vector2(-1.24, -7.62)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Control/ArmParent/Movement/SpellManager/Spell/SpellPoints/3"]
+shape = SubResource("CircleShape2D_0q61s")
+
+[node name="4" type="Area2D" parent="Control/ArmParent/Movement/SpellManager/Spell/SpellPoints"]
+position = Vector2(-1.72973, 6.7027)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Control/ArmParent/Movement/SpellManager/Spell/SpellPoints/4"]
+shape = SubResource("CircleShape2D_0q61s")
+
+[node name="5" type="Area2D" parent="Control/ArmParent/Movement/SpellManager/Spell/SpellPoints"]
+position = Vector2(-1.744, 18.811)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Control/ArmParent/Movement/SpellManager/Spell/SpellPoints/5"]
+shape = SubResource("CircleShape2D_0q61s")
+
+[node name="6" type="Area2D" parent="Control/ArmParent/Movement/SpellManager/Spell/SpellPoints"]
+position = Vector2(-12.1081, 27.4595)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Control/ArmParent/Movement/SpellManager/Spell/SpellPoints/6"]
+shape = SubResource("CircleShape2D_0q61s")
+
+[node name="7" type="Area2D" parent="Control/ArmParent/Movement/SpellManager/Spell/SpellPoints"]
+position = Vector2(-22.4865, 18.8108)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Control/ArmParent/Movement/SpellManager/Spell/SpellPoints/7"]
+shape = SubResource("CircleShape2D_0q61s")
+
+[node name="8" type="Area2D" parent="Control/ArmParent/Movement/SpellManager/Spell/SpellPoints"]
+position = Vector2(-19.627, 7.748)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Control/ArmParent/Movement/SpellManager/Spell/SpellPoints/8"]
+shape = SubResource("CircleShape2D_0q61s")
+
+[node name="9" type="Area2D" parent="Control/ArmParent/Movement/SpellManager/Spell/SpellPoints"]
+position = Vector2(-10.754, 0.939)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Control/ArmParent/Movement/SpellManager/Spell/SpellPoints/9"]
+shape = SubResource("CircleShape2D_0q61s")
+
+[node name="10" type="Area2D" parent="Control/ArmParent/Movement/SpellManager/Spell/SpellPoints"]
+position = Vector2(10.378, -1.201)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Control/ArmParent/Movement/SpellManager/Spell/SpellPoints/10"]
+shape = SubResource("CircleShape2D_0q61s")
+
+[node name="11" type="Area2D" parent="Control/ArmParent/Movement/SpellManager/Spell/SpellPoints"]
+position = Vector2(26.861, -0.216)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Control/ArmParent/Movement/SpellManager/Spell/SpellPoints/11"]
+shape = SubResource("CircleShape2D_0q61s")
+
+[node name="SpellSpawnRaycast" type="RayCast3D" parent="Control/ArmParent/Movement/SpellManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+target_position = Vector3(0, 0, -99)
+
+[node name="SpellTest" parent="Control/ArmParent/Movement/SpellManager" instance=ExtResource("5_cc6d7")]
+
+[node name="Arms" type="Control" parent="Control/ArmParent/Movement"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -40.0
+offset_right = -20.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="ArmsSprite" type="Sprite2D" parent="Control/ArmParent/Movement/Arms"]
+z_index = 999
+position = Vector2(-445, -76)
+scale = Vector2(3.4375, 3.4375)
+texture = ExtResource("2_crbfr")
+region_enabled = true
+region_rect = Rect2(128, 0, 128, 128)
+
+[node name="Touchpoint" type="Node2D" parent="Control/ArmParent/Movement/Arms/ArmsSprite"]
+z_as_relative = false
+position = Vector2(43.0545, -34.3273)
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="Control/ArmParent/Movement/Arms/ArmsSprite/Touchpoint"]
+amount = 50
+emission_shape = 1
+emission_sphere_radius = 0.01
+direction = Vector2(0, 0)
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_max = 10.0
+angular_velocity_min = -1.0
+angular_velocity_max = 1.0
+angle_min = 10.0
+angle_max = 10.0
+scale_amount_max = 25.0
+color = Color(1, 0.494118, 0, 1)
+color_ramp = SubResource("Gradient_8wbwb")
+
+[node name="Area2D" type="Area2D" parent="Control/ArmParent/Movement/Arms/ArmsSprite/Touchpoint"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Control/ArmParent/Movement/Arms/ArmsSprite/Touchpoint/Area2D"]
+shape = SubResource("CircleShape2D_6g8us")
+
+[connection signal="area_entered" from="Control/ArmParent/Movement/Arms/ArmsSprite/Touchpoint/Area2D" to="Control/ArmParent/Movement/SpellManager" method="Touch_entered"]

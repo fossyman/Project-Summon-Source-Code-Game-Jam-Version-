@@ -1,0 +1,39 @@
+[gd_scene load_steps=7 format=3 uid="uid://qy21hb8akkma"]
+
+[ext_resource type="Script" path="res://src/Spawner.gd" id="1_bdkgu"]
+[ext_resource type="Texture2D" uid="uid://jdtrpapmbxib" path="res://Assets/Sprites/CaveEnterance.png" id="1_jnwq8"]
+[ext_resource type="PackedScene" uid="uid://777wqg1xv8o4" path="res://Scenes/Entities/Enemy_Beetle.tscn" id="2_o0dlx"]
+[ext_resource type="PackedScene" uid="uid://ba4wn70fkd3p6" path="res://Scenes/Entities/Enemy_Skeleton.tscn" id="2_rr1fg"]
+[ext_resource type="Script" path="res://src/Components/AC_Health.gd" id="5_0c7kd"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_t3y7m"]
+radius = 10.0
+
+[node name="MonsterSpawner" type="Node3D" node_paths=PackedStringArray("SpawnDelayTimer", "HealthComponent", "Sprite") groups=["enemy"]]
+script = ExtResource("1_bdkgu")
+SpawnDelayTimer = NodePath("SpawnDelay")
+SpawnableUnits = Array[PackedScene]([ExtResource("2_rr1fg"), ExtResource("2_o0dlx")])
+HealthComponent = NodePath("Health")
+Sprite = NodePath("Sprite3D")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(8, 0, 0, 0, 8, 0, 0, 0, 8, 0, 5.15885, 0)
+billboard = 2
+texture_filter = 0
+texture = ExtResource("1_jnwq8")
+
+[node name="SpawnDelay" type="Timer" parent="."]
+wait_time = 4.0
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("5_0c7kd")
+Health = 100
+
+[node name="Area3D" type="Area3D" parent="." groups=["enemy"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.177004, 0)
+collision_layer = 16
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("SphereShape3D_t3y7m")
+
+[connection signal="timeout" from="SpawnDelay" to="." method="_on_spawn_delay_timeout"]

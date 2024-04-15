@@ -1,0 +1,89 @@
+[gd_scene load_steps=6 format=3 uid="uid://bgvvn6yfgho8l"]
+
+[ext_resource type="Texture2D" uid="uid://cr7twh8dwyrmf" path="res://Assets/Sprites/Spells/ATLAS_Spell_Runes.png" id="1_v0164"]
+[ext_resource type="Script" path="res://src/SPELL_SummonMiner.gd" id="2_87rjt"]
+[ext_resource type="PackedScene" uid="uid://dwpiaaaufhuic" path="res://Scenes/Entities/Goblin.tscn" id="3_coeht"]
+[ext_resource type="Texture2D" uid="uid://dyc4swjuo8qrj" path="res://Assets/Sprites/SpellBases/Miner_SummonIcon.png" id="4_o421q"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_0q61s"]
+radius = 3.0
+
+[node name="Spell" type="Sprite2D" node_paths=PackedStringArray("CastPoints")]
+modulate = Color(1, 0.443137, 0, 1)
+scale = Vector2(4.625, 4.625)
+texture = ExtResource("1_v0164")
+region_enabled = true
+region_rect = Rect2(0, 0, 64, 64)
+script = ExtResource("2_87rjt")
+MinerScene = ExtResource("3_coeht")
+CastCost = 5.0
+CastPoints = NodePath("CastPoints")
+RequiredCastScore = 6
+SpellColor = Color(1, 0.47451, 0, 1)
+SpellIcon = ExtResource("4_o421q")
+
+[node name="CastPoints" type="Node2D" parent="."]
+
+[node name="1" type="Area2D" parent="CastPoints"]
+position = Vector2(-3.45946, -27.8919)
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CastPoints/1"]
+shape = SubResource("CircleShape2D_0q61s")
+
+[node name="2" type="Area2D" parent="CastPoints"]
+position = Vector2(-0.8, -16.793)
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CastPoints/2"]
+shape = SubResource("CircleShape2D_0q61s")
+
+[node name="3" type="Area2D" parent="CastPoints"]
+position = Vector2(-1.24, -7.62)
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CastPoints/3"]
+shape = SubResource("CircleShape2D_0q61s")
+
+[node name="4" type="Area2D" parent="CastPoints"]
+position = Vector2(-0.93, 13.388)
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CastPoints/4"]
+shape = SubResource("CircleShape2D_0q61s")
+
+[node name="6" type="Area2D" parent="CastPoints"]
+position = Vector2(-15.958, 26.174)
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CastPoints/6"]
+shape = SubResource("CircleShape2D_0q61s")
+
+[node name="9" type="Area2D" parent="CastPoints"]
+position = Vector2(-10.754, 0.939)
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CastPoints/9"]
+shape = SubResource("CircleShape2D_0q61s")
+
+[node name="10" type="Area2D" parent="CastPoints"]
+position = Vector2(10.378, -1.201)
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CastPoints/10"]
+shape = SubResource("CircleShape2D_0q61s")
+
+[node name="8" type="Area2D" parent="CastPoints"]
+position = Vector2(26.861, -0.216)
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CastPoints/8"]
+shape = SubResource("CircleShape2D_0q61s")

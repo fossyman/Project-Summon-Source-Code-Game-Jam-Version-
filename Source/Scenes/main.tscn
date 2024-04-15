@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://d2hnsrwxh62hx"]
+
+[ext_resource type="PackedScene" uid="uid://t84o2a6dk38e" path="res://Scenes/TestArea.tscn" id="1_27fef"]
+[ext_resource type="PackedScene" uid="uid://oyoibjb4j83d" path="res://Scenes/Entities/Player.tscn" id="2_73f33"]
+
+[node name="Main" type="Node"]
+process_mode = 3
+
+[node name="Scene" type="Node" parent="."]
+
+[node name="TestArea" parent="Scene" instance=ExtResource("1_27fef")]
+
+[node name="DONT_DELETE" type="Node" parent="."]
+
+[node name="Player" parent="DONT_DELETE" instance=ExtResource("2_73f33")]
+process_mode = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.7, 0)
+
+[node name="SpawnPoint" type="Node3D" parent="DONT_DELETE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)

@@ -1,0 +1,44 @@
+[gd_scene load_steps=6 format=3 uid="uid://dwpiaaaufhuic"]
+
+[ext_resource type="Script" path="res://src/CHAR_MinerGoblin.gd" id="1_d14px"]
+[ext_resource type="Texture2D" uid="uid://bfimu2py3flh4" path="res://Assets/Sprites/Characters/Miner/Goblin.png" id="2_2g7d5"]
+[ext_resource type="Texture2D" uid="uid://rcweq2q5ytdt" path="res://Assets/Sprites/Characters/Miner/Goblin_Miner_Full.png" id="2_3f7pq"]
+[ext_resource type="Script" path="res://src/Components/AC_Health.gd" id="4_2la7f"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_dapjr"]
+
+[node name="Goblin" type="CharacterBody3D" node_paths=PackedStringArray("HealthComponent", "Sprite", "NavAgent", "AITimer", "CharaterSprite") groups=["ally"]]
+script = ExtResource("1_d14px")
+FullSprite = ExtResource("2_3f7pq")
+HealthComponent = NodePath("Node")
+Sprite = NodePath("Sprite3D")
+NavAgent = NodePath("NavigationAgent3D")
+AITimer = NodePath("AITimer")
+Moveespeed = 2.0
+CharaterSprite = NodePath("Sprite3D")
+DefaultSprite = ExtResource("2_2g7d5")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0.625419, 0)
+billboard = 2
+texture_filter = 0
+texture = ExtResource("2_2g7d5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("SphereShape3D_dapjr")
+
+[node name="AITimer" type="Timer" parent="."]
+autostart = true
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+target_desired_distance = 2.0
+avoidance_enabled = true
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource("4_2la7f")
+Health = 2
+
+[connection signal="timeout" from="AITimer" to="." method="_on_ai_timer_timeout"]
+[connection signal="target_reached" from="NavigationAgent3D" to="." method="_on_navigation_agent_3d_target_reached"]
+[connection signal="velocity_computed" from="NavigationAgent3D" to="." method="_on_navigation_agent_3d_velocity_computed"]

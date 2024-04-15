@@ -1,0 +1,56 @@
+[gd_scene load_steps=6 format=3 uid="uid://777wqg1xv8o4"]
+
+[ext_resource type="Script" path="res://src/Base Classes/BC_EnemyAI.gd" id="1_d8ir4"]
+[ext_resource type="Texture2D" uid="uid://dnysy26dtfin4" path="res://Assets/Sprites/Characters/BugEnemy/Enemy_1.png" id="2_iwojg"]
+[ext_resource type="Script" path="res://src/Components/AC_Health.gd" id="3_3doya"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ke7dc"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_t6pb1"]
+radius = 3.71309
+
+[node name="Enemy" type="CharacterBody3D" node_paths=PackedStringArray("DetectionArea", "HealthComponent", "Sprite", "NavAgent", "AITimer", "CharaterSprite") groups=["enemy"]]
+collision_layer = 16
+script = ExtResource("1_d8ir4")
+DetectionArea = NodePath("Area3D")
+HealthComponent = NodePath("Node")
+Sprite = NodePath("Sprite3D")
+NavAgent = NodePath("NavigationAgent3D")
+AITimer = NodePath("AITimer")
+Moveespeed = 1.0
+AttackRange = 5.0
+AttackDamage = 1
+CharaterSprite = NodePath("Sprite3D")
+DefaultSprite = ExtResource("2_iwojg")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_ke7dc")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 1.72411, 0)
+billboard = 2
+double_sided = false
+texture_filter = 0
+texture = ExtResource("2_iwojg")
+
+[node name="AITimer" type="Timer" parent="."]
+autostart = true
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+target_desired_distance = 2.0
+avoidance_enabled = true
+
+[node name="Area3D" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("SphereShape3D_t6pb1")
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource("3_3doya")
+Health = 20
+
+[connection signal="timeout" from="AITimer" to="." method="_on_ai_timer_timeout"]
+[connection signal="velocity_computed" from="NavigationAgent3D" to="." method="_on_navigation_agent_3d_velocity_computed"]
+[connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
